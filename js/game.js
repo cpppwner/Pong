@@ -20,7 +20,7 @@ var gameProperties = {
     ballVelocityIncrement: 25,
     ballReturnCount: 4,
 
-    scoreToWin: 11,
+    scoreToWin: 11
 };
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ var graphicAssets = {
     ballName: 'ball',
 
     paddleURL: 'assets/paddle.png',
-    paddleName: 'paddle',
+    paddleName: 'paddle'
 };
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ var soundAssets = {
     ballMissedName: 'ballMissed',
 
     mp4URL: '.m4a',
-    oggURL: '.ogg',
+    oggURL: '.ogg'
 };
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -60,44 +60,44 @@ var fontAssets = {
     scoreTop_y: 10,
 
     scoreFontStyle:{font: '80px Arial', fill: '#FFFFFF', align: 'center'},
-    instructionsFontStyle:{font: '24px Arial', fill: '#FFFFFF', align: 'center'},
+    instructionsFontStyle:{font: '24px Arial', fill: '#FFFFFF', align: 'center'}
 };
 
 var labels = {
     clickToStart: 'Left paddle: A to move up, Z to move down.\n\nRight paddle: UP and DOWN arrow keys.\n\n- click to start -',
-    winner: 'Winner!',
+    winner: 'Winner!'
 };
 
 var mainState = function(game) {
-    this.backgroundGraphics;
-    this.ballSprite;
-    this.paddleLeftSprite;
-    this.paddleRightSprite;
-    this.paddleGroup;
+    this.backgroundGraphics = null;
+    this.ballSprite = null;
+    this.paddleLeftSprite = null;
+    this.paddleRightSprite = null;
+    this.paddleGroup = null;
 
-    this.paddleLeft_up;
-    this.paddleLeft_down;
-    this.paddleRight_up;
-    this.paddleRight_down;
+    this.paddleLeft_up = null;
+    this.paddleLeft_down = null;
+    this.paddleRight_up = null;
+    this.paddleRight_down = null;
 
-    this.missedSide;
+    this.missedSide = null;
 
-    this.scoreLeft;
-    this.scoreRight;
+    this.scoreLeft = null;
+    this.scoreRight = null;
 
-    this.tf_scoreLeft;
-    this.tf_scoreRight;
+    this.tf_scoreLeft = null;
+    this.tf_scoreRight = null;
 
-    this.sndBallHit;
-    this.sndBallBounce;
-    this.sndBallMissed;
+    this.sndBallHit = null;
+    this.sndBallBounce = null;
+    this.sndBallMissed = null;
 
-    this.instructions;
-    this.winnerLeft;
-    this.winnerRight;
+    this.instructions = null;
+    this.winnerLeft = null;
+    this.winnerRight = null;
 
-    this.ballVelocity;
-}
+    this.ballVelocity = null;
+};
 
 // The main state that contains our game. Think of states like pages or screens such as the splash screen, main menu, game screen, high scores, inventory, etc.
 mainState.prototype = {
@@ -224,12 +224,6 @@ mainState.prototype = {
         this.resetBall();
         this.resetScores();
         this.hideTextFields();
-    },
-
-    resetBall: function () {
-        this.ballSprite.reset(game.world.centerX, game.rnd.between(0, gameProperties.screenHeight));
-        this.ballSprite.visible = false;
-        game.time.events.add(Phaser.Timer.SECOND * gameProperties.ballStartDelay, this.startBall, this);
     },
 
     startBall: function () {
@@ -377,7 +371,7 @@ mainState.prototype = {
         this.instructions.visible = false;
         this.winnerLeft.visible = false;
         this.winnerRight.visible = false;
-    },
+    }
 };
 
 // Initialise the Phaser framework by creating an instance of a Phaser.Game object and assigning it to a local variable called 'game'.

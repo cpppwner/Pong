@@ -34,13 +34,14 @@ var bootState = function(game) {
 // The first two arguments are the width and the height of the canvas element. In this case 640 x 480 pixels. You can resize this in the gameProperties object above.
 // The third argument is the renderer that will be used. Phaser.AUTO is used to automatically detect whether to use the WebGL or Canvas renderer.
 // The fourth argument is 'gameDiv', which is the id of the DOM element we used above in the index.html file where the canvas element is inserted.
-var game = new Phaser.Game(gameProperties.screenWidth, gameProperties.screenHeight, Phaser.AUTO, 'gameDiv');
+var game = new Phaser.Game(gameDimensions.screenWidth, gameDimensions.screenHeight, Phaser.AUTO, 'gameDiv');
 
 // Here we declare and add a state to the game object.
 // The first argument is the state name that will is used to switch between states
 // The second argument is the object name that will used when a state name is called
 game.state.add(gameStates.BOOT, bootState);
 game.state.add(gameStates.MENU, menuState);
+game.state.add(gameStates.MENU_DIFFICULTY, menuDifficultyState);
 game.state.add(gameStates.GAME, mainState);
 
 // We are using the 'main' state name as the argument to load our new state.

@@ -20,9 +20,12 @@ var menuUtil = function(game, headerText, menuEntries) {
     // menu specific font assets
     //------------------------------------------------------------------------------------------------------------------
     var fontAssets = {
-        headerFontStyle: {font: '80px Arial', fill: '#FFFFFF', align: 'center'},
-        menuFontStyle: {font: fontSizePixels.toString()+'px Arial', fill: '#FFFFFF', align: 'center'}
+        headerFontStyle: {font: '32px Arial', fill: '#FFFFFF', align: 'center'},
+        menuFontStyle: {font: fontSizePixels.toString()+'px Arial', fill: '#FFFFFF', align: 'center'},
+        hintFontStyle: {font: '16px Arial', fill: '#FFFFFF', align: 'center'}
     };
+
+    var hintText = "UP and DOWN arrow keys to navigate.\nENTER key to confirm selection.";
 
     var menuSpace = (menuEntries.length * fontSizePixels) + ((menuEntries.length - 1) * menuSpacePixels);
     var menuOffset_y = (gameDimensions.screenHeight - menuSpace) / 2;
@@ -36,21 +39,22 @@ var menuUtil = function(game, headerText, menuEntries) {
         setSelectedIndex(selectedIndex);
         initHeader();
         initMenu();
+        initHintText();
         initKeyboard();
         initSounds();
     };
 
     var setSelectedIndex = function(selectedIndex) {
         selectedMenuIndex = selectedIndex;
-    }
+    };
 
     var getSelectedIndex = function() {
         return selectedMenuIndex;
-    }
+    };
 
     var initHeader = function() {
 
-        var tf_Header =  game.add.text(game.world.centerX, 100, headerText, fontAssets.menuFontStyle);
+        var tf_Header =  game.add.text(game.world.centerX, 100, headerText, fontAssets.headerFontStyle);
         tf_Header.anchor.set(0.5, 0.5);
     };
 
@@ -74,6 +78,13 @@ var menuUtil = function(game, headerText, menuEntries) {
         ballSprite = game.add.sprite(ballOffset_x, ballOffset_y, graphicAssets.ballName);
         ballSprite.anchor.set(0.5, 0.5);
     };
+
+    var initHintText = function() {
+
+        var tf_Entry = game.add.text(game.world.centerX, gameDimensions.screenHeight - 100, hintText, fontAssets.hintFontStyle);
+        tf_Entry.anchor.set(0.5, 0.5);
+    };
+
 
     var initKeyboard = function() {
 

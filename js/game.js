@@ -127,7 +127,10 @@ var mainState = function(game) {
         tf_scoreRight = game.add.text(fontAssets.scoreRight_x, fontAssets.scoreTop_y, "0", fontAssets.scoreFontStyle);
         tf_scoreRight.anchor.set(0.5, 0);
 
-        instructions = game.add.text(game.world.centerX, game.world.centerY, labels.clickToStart, fontAssets.instructionsFontStyle);
+        instructions = game.add.text(game.world.centerX,
+                                     game.world.centerY,
+                                     gameProperties.gameMode === gameMode.SINGLE_PLAYER ? labels.clickToStartSinglePlayer : labels.clickToStart,
+                                     fontAssets.instructionsFontStyle);
         instructions.anchor.set(0.5, 0.5);
 
         winnerLeft = game.add.text(gameProperties.screenWidth * 0.25, gameProperties.screenHeight * 0.25, labels.winner, fontAssets.instructionsFontStyle);
@@ -163,7 +166,7 @@ var mainState = function(game) {
 
     var initKeyboard = function () {
 
-        if (gameProperties.gameMode == gameMode.MULTI_PLAYER) {
+        if (gameProperties.gameMode === gameMode.MULTI_PLAYER) {
             // only enable left paddle controls for multi player
             paddleLeft_up = game.input.keyboard.addKey(Phaser.Keyboard.A);
             paddleLeft_down = game.input.keyboard.addKey(Phaser.Keyboard.Z);
@@ -206,9 +209,9 @@ var mainState = function(game) {
 
         var randomAngle = game.rnd.pick(gameProperties.ballRandomStartingAngleRight.concat(gameProperties.ballRandomStartingAngleLeft));
 
-        if (missedSide == 'right') {
+        if (missedSide === 'right') {
             randomAngle = game.rnd.pick(gameProperties.ballRandomStartingAngleRight);
-        } else if (missedSide == 'left') {
+        } else if (missedSide === 'left') {
             randomAngle = game.rnd.pick(gameProperties.ballRandomStartingAngleLeft);
         }
 
@@ -225,7 +228,7 @@ var mainState = function(game) {
         paddleGroup.setAll('visible', enabled);
         paddleGroup.setAll('body.enable', enabled);
 
-        if (gameProperties.gameMode == gameMode.MULTI_PLAYER) {
+        if (gameProperties.gameMode === gameMode.MULTI_PLAYER) {
             paddleLeft_up.enabled = enabled;
             paddleLeft_down.enabled = enabled;
         }
@@ -242,7 +245,7 @@ var mainState = function(game) {
     };
 
     var moveLeftPaddle = function () {
-        if (gameProperties.gameMode == gameMode.SINGLE_PLAYER) {
+        if (gameProperties.gameMode === gameMode.SINGLE_PLAYER) {
             aiUpdateLeftPaddle();
        } else {
             if (paddleLeft_up.isDown) {
@@ -263,10 +266,10 @@ var mainState = function(game) {
     var aiUpdateLeftPaddle = function() {
 
         var threshhold = 1;
-        if (gameProperties.gameDifficulty == gameDifficulty.EASY) {
+        if (gameProperties.gameDifficulty === gameDifficulty.EASY) {
             threshhold = paddleLeftSprite.height / 3;
-        } else if (gameProperties.gameDifficulty == gameDifficulty.MEDIUM) {
-            threshhold = paddleLeftSprite.height / 4;
+        } else if (gameProperties.gameDifficulty === gameDifficulty.MEDIUM) {
+            threshhold = paddleLeftSprite.height / 6;
         }
 
         if ((ballSprite.world.y - paddleLeftSprite.world.y) > threshhold) {

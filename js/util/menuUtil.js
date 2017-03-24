@@ -121,7 +121,7 @@ var menuUtil = function(game, headerText, menuEntries) {
 
     var getBallOffsetY = function() {
 
-        var result = menuOffset_y + selectedMenuIndex * (fontSizePixels + menuSpacePixels)
+        var result = menuOffset_y + selectedMenuIndex * (fontSizePixels + menuSpacePixels);
         return result - (ballSprite.height / 2);
     };
 

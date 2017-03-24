@@ -1,13 +1,47 @@
-/**
- * game.js Contains the Pong game code and some global game properties.
- *
- *
- * @type {{screenWidth: number, screenHeight: number, dashSize: number, paddleLeft_x: number, paddleRight_x: number, paddleVelocity: number, paddleSegmentsMax: number, paddleSegmentHeight: number, paddleSegmentAngle: number, paddleTopGap: number, ballVelocity: number, ballRandomStartingAngleLeft: [*], ballRandomStartingAngleRight: [*], ballStartDelay: number, ballVelocityIncrement: number, ballReturnCount: number, scoreToWin: number}}
- */
+// The game properties object that currently only contains the screen dimensions
+var gameProperties = {
+    screenWidth: 640,
+    screenHeight: 480,
+
+    dashSize: 5,
+
+    paddleLeft_x: 50,
+    paddleRight_x: 590,
+    paddleVelocity: 600,
+    paddleSegmentsMax: 4,
+    paddleSegmentHeight: 4,
+    paddleSegmentAngle: 15,
+    paddleTopGap: 22,
+
+    ballVelocity: 500,
+    ballRandomStartingAngleLeft: [-120, 120],
+    ballRandomStartingAngleRight: [-60, 60],
+    ballStartDelay: 2,
+    ballVelocityIncrement: 25,
+    ballReturnCount: 4,
+
+    scoreToWin: 11
+};
+
+//----------------------------------------------------------------------------------------------------------------------
+// font assets
+//----------------------------------------------------------------------------------------------------------------------
+var fontAssets = {
+    scoreLeft_x: gameProperties.screenWidth * 0.25,
+    scoreRight_x: gameProperties.screenWidth * 0.75,
+    scoreTop_y: 10,
+
+    scoreFontStyle:{font: '80px Arial', fill: '#FFFFFF', align: 'center'},
+    instructionsFontStyle:{font: '24px Arial', fill: '#FFFFFF', align: 'center'}
+};
+
+var labels = {
+    clickToStart: 'Left paddle: A to move up, Z to move down.\n\nRight paddle: UP and DOWN arrow keys.\n\n- click to start -',
+    winner: 'Winner!'
+};
 
 // The main state that contains our game. Think of states like pages or screens such as the splash screen, main menu, game screen, high scores, inventory, etc.
 var mainState = function(game) {
-
     var backgroundGraphics = null;
     var ballSprite = null;
     var paddleLeftSprite = null;
@@ -39,47 +73,6 @@ var mainState = function(game) {
 
     var ballReturnCount = 0;
 
-    var gameProperties = {
-        dashSize: 5,
-
-        paddleLeft_x: 50,
-        paddleRight_x: 590,
-        paddleVelocity: 600,
-        paddleSegmentsMax: 4,
-        paddleSegmentHeight: 4,
-        paddleSegmentAngle: 15,
-        paddleTopGap: 22,
-
-        ballVelocity: 500,
-        ballRandomStartingAngleLeft: [-120, 120],
-        ballRandomStartingAngleRight: [-60, 60],
-        ballStartDelay: 2,
-        ballVelocityIncrement: 25,
-        ballReturnCount: 4,
-
-        scoreToWin: 11,
-
-        difficulty: gameDifficulty.MEDIUM
-    };
-
-    var labels = {
-        clickToStart: 'Left paddle: A to move up, Z to move down.\n\nRight paddle: UP and DOWN arrow keys.\n\n- click to start -',
-        winner: 'Winner!'
-    };
-
-
-    //------------------------------------------------------------------------------------------------------------------
-    // game specific font assets
-    //------------------------------------------------------------------------------------------------------------------
-    var fontAssets = {
-        scoreLeft_x: gameDimensions.screenWidth * 0.25,
-        scoreRight_x: gameDimensions.screenWidth * 0.75,
-        scoreTop_y: 10,
-
-        scoreFontStyle:{font: '80px Arial', fill: '#FFFFFF', align: 'center'},
-        instructionsFontStyle:{font: '24px Arial', fill: '#FFFFFF', align: 'center'}
-    };
-
     // The create function is called after all assets are loaded and ready for use. This is where we add all our sprites, sounds, levels, text, etc.
     var create = function () {
         initGraphics();
@@ -95,7 +88,7 @@ var mainState = function(game) {
         moveRightPaddle();
         game.physics.arcade.overlap(ballSprite, paddleGroup, collideWithPaddle, null, this);
 
-        if (ballSprite.body.blocked.up || ballSprite.body.blocked.down || ballSprite.body.blocked.left || ballSprite.body.blocked.right) {
+        if (ballSprite.body.blocked.up || ballSprite.body.blocked.down) { //}  || ballSprite.body.blocked.left || ballSprite.body.blocked.right) {
             sndBallBounce.play();
         }
     };
@@ -127,10 +120,10 @@ var mainState = function(game) {
         instructions = game.add.text(game.world.centerX, game.world.centerY, labels.clickToStart, fontAssets.instructionsFontStyle);
         instructions.anchor.set(0.5, 0.5);
 
-        winnerLeft = game.add.text(gameDimensions.screenWidth * 0.25, gameDimensions.screenHeight * 0.25, labels.winner, fontAssets.instructionsFontStyle);
+        winnerLeft = game.add.text(gameProperties.screenWidth * 0.25, gameProperties.screenHeight * 0.25, labels.winner, fontAssets.instructionsFontStyle);
         winnerLeft.anchor.set(0.5, 0.5);
 
-        winnerRight = game.add.text(gameDimensions.screenWidth * 0.75, gameDimensions.screenHeight * 0.25, labels.winner, fontAssets.instructionsFontStyle);
+        winnerRight = game.add.text(gameProperties.screenWidth * 0.75, gameProperties.screenHeight * 0.25, labels.winner, fontAssets.instructionsFontStyle);
         winnerRight.anchor.set(0.5, 0.5);
 
         hideTextFields();
@@ -199,9 +192,9 @@ var mainState = function(game) {
 
         var randomAngle = game.rnd.pick(gameProperties.ballRandomStartingAngleRight.concat(gameProperties.ballRandomStartingAngleLeft));
 
-        if (missedSide === 'right') {
+        if (missedSide == 'right') {
             randomAngle = game.rnd.pick(gameProperties.ballRandomStartingAngleRight);
-        } else if (missedSide === 'left') {
+        } else if (missedSide == 'left') {
             randomAngle = game.rnd.pick(gameProperties.ballRandomStartingAngleLeft);
         }
 
@@ -278,7 +271,7 @@ var mainState = function(game) {
             segmentHit = -(gameProperties.paddleSegmentsMax - 1);
         }
 
-        if (paddle.x < gameDimensions.screenWidth * 0.5) {
+        if (paddle.x < gameProperties.screenWidth * 0.5) {
             returnAngle = segmentHit * gameProperties.paddleSegmentAngle;
             game.physics.arcade.velocityFromAngle(returnAngle, ballVelocity, ballSprite.body.velocity);
         } else {
@@ -304,7 +297,7 @@ var mainState = function(game) {
         if (ballSprite.x < 0) {
             missedSide = 'left';
             scoreRight++;
-        } else if (ballSprite.x > gameDimensions.screenWidth) {
+        } else if (ballSprite.x > gameProperties.screenWidth) {
             missedSide = 'right';
             scoreLeft++;
         }
@@ -335,22 +328,28 @@ var mainState = function(game) {
 
     var hideTextFields = function () {
         instructions.visible = false;
+        instructions.visible = false;
         winnerLeft.visible = false;
         winnerRight.visible = false;
     };
 
-    var getGameDifficulty = function() {
-        return gameProperties.difficulty;
+    var getDifficulty = function() {
+        return gameDifficulty.MEDIUM; // TODO
     };
 
-    var setGameDifficulty = function(difficulty) {
-        gameProperties.difficulty = difficulty;
-    }
+    var setDifficulty = function(difficulty) {
+        // TIDI
+    };
+
+    var setGameMode = function(gameMode) {
+        // TODO
+    };
 
     return {
         create: create,
         update: update,
-        getDifficulty: getGameDifficulty,
-        setDifficulty: setGameDifficulty
+        getDifficulty: getDifficulty,
+        setDifficulty: setDifficulty,
+        setGameMode: setGameMode
     };
 };

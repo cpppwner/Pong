@@ -31,6 +31,7 @@ var menuUtil = function(game, headerText, menuEntries) {
     var menuOffset_y = (gameDimensions.screenHeight - menuSpace) / 2;
 
     var ballOffset_x = null;
+    var tf_Entries = [];
 
     var selectedMenuIndex = 0;
 
@@ -42,6 +43,17 @@ var menuUtil = function(game, headerText, menuEntries) {
         initHintText();
         initKeyboard();
         initSounds();
+    };
+
+    var hide = function() {
+
+        tf_Entries.forEach(function(e) {
+           e.visible = false;
+           e.destroy();
+        });
+        game.input.reset();
+        ballSprite.destroy();
+        sndBallBounce.destroy();
     };
 
     var setSelectedIndex = function(selectedIndex) {
@@ -56,6 +68,7 @@ var menuUtil = function(game, headerText, menuEntries) {
 
         var tf_Header =  game.add.text(game.world.centerX, 100, headerText, fontAssets.headerFontStyle);
         tf_Header.anchor.set(0.5, 0.5);
+        tf_Entries.push(tf_Header);
     };
 
     var initMenu = function() {
@@ -68,6 +81,7 @@ var menuUtil = function(game, headerText, menuEntries) {
             var y_offset = i === 0 ? menuOffset_y : menuOffset_y + (i * (fontSizePixels + menuSpacePixels));
             var tf_Entry = game.add.text(game.world.centerX, y_offset, text, fontAssets.menuFontStyle);
             tf_Entry.anchor.set(0.5, 0.5);
+            tf_Entries.push(tf_Entry);
 
             // house keeping avoid double looping
             maxWidth = maxWidth > tf_Entry.width ? maxWidth : tf_Entry.width;
@@ -81,8 +95,9 @@ var menuUtil = function(game, headerText, menuEntries) {
 
     var initHintText = function() {
 
-        var tf_Entry = game.add.text(game.world.centerX, gameDimensions.screenHeight - 100, hintText, fontAssets.hintFontStyle);
-        tf_Entry.anchor.set(0.5, 0.5);
+        var tf_Hint = game.add.text(game.world.centerX, gameDimensions.screenHeight - 100, hintText, fontAssets.hintFontStyle);
+        tf_Hint.anchor.set(0.5, 0.5);
+        tf_Entries.push(tf_Hint);
     };
 
 
@@ -133,6 +148,7 @@ var menuUtil = function(game, headerText, menuEntries) {
 
     return {
         show: show,
+        hide: hide,
         getSelectedIndex: getSelectedIndex,
         setSelectedIndex: setSelectedIndex
     };

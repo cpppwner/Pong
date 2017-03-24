@@ -30,6 +30,7 @@ var menuDifficultyState = function(game) {
     var selectDifficulty = function(difficulty) {
 
         game.state.states[gameStates.GAME].setDifficulty(difficulty);
+        menu.hide();
         game.state.start(gameStates.MENU);
     };
 

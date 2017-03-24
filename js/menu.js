@@ -32,18 +32,23 @@ var menuState = function(game) {
     var startSinglePlayerGame = function() {
 
         selectedIndex = menu.getSelectedIndex();
-        console.log('single player');
+        game.state.states[gameStates.GAME].setGameMode(gameMode.SINGLE_PLAYER);
+        menu.hide();
+        game.state.start(gameStates.GAME);
     };
 
     var startMultiPlayerGame = function() {
 
         selectedIndex = menu.getSelectedIndex();
-        console.log('multi player');
+        game.state.states[gameStates.GAME].setGameMode(gameMode.MULTI_PLAYER);
+        menu.hide();
+        game.state.start(gameStates.GAME);
     };
 
     var selectDifficulty = function() {
 
         selectedIndex = menu.getSelectedIndex();
+        menu.hide();
         game.state.start(gameStates.MENU_DIFFICULTY);
     };
 

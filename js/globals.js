@@ -24,6 +24,18 @@ var gameDifficulty = {
 };
 
 /**
+ * Game mode
+ *
+ * Either one human player or two human players.
+ *
+ * @type {{SINGLE_PLAYER: number, MULTI_PLAYER: number}}
+ */
+var gameMode = {
+    SINGLE_PLAYER: 1,
+    MULTI_PLAYER: 2
+};
+
+/**
  * game dimensions
  * @type {{screenWidth: number, screenHeight: number}}
  */

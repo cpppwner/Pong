@@ -88,9 +88,9 @@ var menuUtil = function(game, headerText, menuEntries) {
         }
 
         ballOffset_x =  ((gameDimensions.screenWidth - maxWidth) / 2) - ballOffsetPixels;
-        var ballOffset_y = getBallOffsetY();
-        ballSprite = game.add.sprite(ballOffset_x, ballOffset_y, graphicAssets.ballName);
+        ballSprite = game.add.sprite(ballOffset_x, 0, graphicAssets.ballName);
         ballSprite.anchor.set(0.5, 0.5);
+        ballSprite.y = getBallOffsetY();
     };
 
     var initHintText = function() {
@@ -121,7 +121,8 @@ var menuUtil = function(game, headerText, menuEntries) {
 
     var getBallOffsetY = function() {
 
-        return menuOffset_y + selectedMenuIndex * (fontSizePixels + menuSpacePixels)
+        var result = menuOffset_y + selectedMenuIndex * (fontSizePixels + menuSpacePixels)
+        return result - (ballSprite.height / 2);
     };
 
     var onUpArrowKeyUp = function() {

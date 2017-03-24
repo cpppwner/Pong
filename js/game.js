@@ -1,47 +1,56 @@
+// The main state that contains our game. Think of states like pages or screens such as the splash screen, main menu, game screen, high scores, inventory, etc.
+var mainState = function(game) {
 // The game properties object that currently only contains the screen dimensions
-var gameProperties = {
-    screenWidth: 640,
-    screenHeight: 480,
+    var gameProperties = {
+        screenWidth: 640,
+        screenHeight: 480,
 
-    dashSize: 5,
+        dashSize: 5,
 
-    paddleLeft_x: 50,
-    paddleRight_x: 590,
-    paddleVelocity: 600,
-    paddleSegmentsMax: 4,
-    paddleSegmentHeight: 4,
-    paddleSegmentAngle: 15,
-    paddleTopGap: 22,
+        paddleLeft_x: 50,
+        paddleRight_x: 590,
+        paddleVelocity: 600,
+        paddleSegmentsMax: 4,
+        paddleSegmentHeight: 4,
+        paddleSegmentAngle: 15,
+        paddleTopGap: 22,
 
-    ballVelocity: 500,
-    ballRandomStartingAngleLeft: [-120, 120],
-    ballRandomStartingAngleRight: [-60, 60],
-    ballStartDelay: 2,
-    ballVelocityIncrement: 25,
-    ballReturnCount: 4,
+        ballVelocityEasy: 450,
+        ballVelocityMedium: 475,
+        ballVelocityDifficult: 500,
 
-    scoreToWin: 11
-};
+
+        ballRandomStartingAngleLeft: [-120, 120],
+        ballRandomStartingAngleRight: [-60, 60],
+        ballStartDelay: 2,
+        ballVelocityIncrement: 25,
+        ballReturnCount: 4,
+
+        scoreToWin: 11,
+
+        gameDifficulty: gameDifficulty.MEDIUM,
+        gameMode: gameMode.MULTI_PLAYER
+    };
 
 //----------------------------------------------------------------------------------------------------------------------
 // font assets
 //----------------------------------------------------------------------------------------------------------------------
-var fontAssets = {
-    scoreLeft_x: gameProperties.screenWidth * 0.25,
-    scoreRight_x: gameProperties.screenWidth * 0.75,
-    scoreTop_y: 10,
+    var fontAssets = {
+        scoreLeft_x: gameProperties.screenWidth * 0.25,
+        scoreRight_x: gameProperties.screenWidth * 0.75,
+        scoreTop_y: 10,
 
-    scoreFontStyle:{font: '80px Arial', fill: '#FFFFFF', align: 'center'},
-    instructionsFontStyle:{font: '24px Arial', fill: '#FFFFFF', align: 'center'}
-};
+        scoreFontStyle:{font: '80px Arial', fill: '#FFFFFF', align: 'center'},
+        instructionsFontStyle:{font: '24px Arial', fill: '#FFFFFF', align: 'center'}
+    };
 
-var labels = {
-    clickToStart: 'Left paddle: A to move up, Z to move down.\n\nRight paddle: UP and DOWN arrow keys.\n\n- click to start -',
-    winner: 'Winner!'
-};
+    var labels = {
+        clickToStartSinglePlayer: 'Paddle: UP and DOWN arrow keys.\n\n- click to start -',
+        clickToStart: 'Left paddle: A to move up, Z to move down.\n\nRight paddle: UP and DOWN arrow keys.\n\n- click to start -',
+        winner: 'Winner!'
+    };
 
-// The main state that contains our game. Think of states like pages or screens such as the splash screen, main menu, game screen, high scores, inventory, etc.
-var mainState = function(game) {
+
     var backgroundGraphics = null;
     var ballSprite = null;
     var paddleLeftSprite = null;
@@ -88,7 +97,8 @@ var mainState = function(game) {
         moveRightPaddle();
         game.physics.arcade.overlap(ballSprite, paddleGroup, collideWithPaddle, null, this);
 
-        if (ballSprite.body.blocked.up || ballSprite.body.blocked.down) { //}  || ballSprite.body.blocked.left || ballSprite.body.blocked.right) {
+        if (ballSprite.body.blocked.up || ballSprite.body.blocked.down || ballSprite.body.blocked.left || ballSprite.body.blocked.right) {
+            console.log(ballSprite.body.blocked);
             sndBallBounce.play();
         }
     };
@@ -152,8 +162,12 @@ var mainState = function(game) {
     };
 
     var initKeyboard = function () {
-        paddleLeft_up = game.input.keyboard.addKey(Phaser.Keyboard.A);
-        paddleLeft_down = game.input.keyboard.addKey(Phaser.Keyboard.Z);
+
+        if (gameProperties.gameMode == gameMode.MULTI_PLAYER) {
+            // only enable left paddle controls for multi player
+            paddleLeft_up = game.input.keyboard.addKey(Phaser.Keyboard.A);
+            paddleLeft_down = game.input.keyboard.addKey(Phaser.Keyboard.Z);
+        }
 
         paddleRight_up = game.input.keyboard.addKey(Phaser.Keyboard.UP);
         paddleRight_down = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
@@ -186,7 +200,7 @@ var mainState = function(game) {
     };
 
     var startBall = function () {
-        ballVelocity = gameProperties.ballVelocity;
+        ballVelocity = getInitialBallVelocity();
         ballReturnCount = 0;
         ballSprite.visible = true;
 
@@ -198,7 +212,7 @@ var mainState = function(game) {
             randomAngle = game.rnd.pick(gameProperties.ballRandomStartingAngleLeft);
         }
 
-        game.physics.arcade.velocityFromAngle(randomAngle, gameProperties.ballVelocity, ballSprite.body.velocity);
+        game.physics.arcade.velocityFromAngle(randomAngle, getInitialBallVelocity(), ballSprite.body.velocity);
     };
 
     var resetBall = function () {
@@ -211,8 +225,10 @@ var mainState = function(game) {
         paddleGroup.setAll('visible', enabled);
         paddleGroup.setAll('body.enable', enabled);
 
-        paddleLeft_up.enabled = enabled;
-        paddleLeft_down.enabled = enabled;
+        if (gameProperties.gameMode == gameMode.MULTI_PLAYER) {
+            paddleLeft_up.enabled = enabled;
+            paddleLeft_down.enabled = enabled;
+        }
         paddleRight_up.enabled = enabled;
         paddleRight_down.enabled = enabled;
 
@@ -226,20 +242,55 @@ var mainState = function(game) {
     };
 
     var moveLeftPaddle = function () {
-        if (paddleLeft_up.isDown)
-        {
-            paddleLeftSprite.body.velocity.y = -gameProperties.paddleVelocity;
-        }
-        else if (paddleLeft_down.isDown)
-        {
-            paddleLeftSprite.body.velocity.y = gameProperties.paddleVelocity;
-        } else {
-            paddleLeftSprite.body.velocity.y = 0;
+        if (gameProperties.gameMode == gameMode.SINGLE_PLAYER) {
+            aiUpdateLeftPaddle();
+       } else {
+            if (paddleLeft_up.isDown) {
+                paddleLeftSprite.body.velocity.y = -gameProperties.paddleVelocity;
+            }
+            else if (paddleLeft_down.isDown) {
+                paddleLeftSprite.body.velocity.y = gameProperties.paddleVelocity;
+            } else {
+                paddleLeftSprite.body.velocity.y = 0;
+            }
         }
 
         if (paddleLeftSprite.body.y < gameProperties.paddleTopGap) {
             paddleLeftSprite.body.y = gameProperties.paddleTopGap;
         }
+    };
+
+    var aiUpdateLeftPaddle = function() {
+
+        var threshhold = 1;
+        if (gameProperties.gameDifficulty == gameDifficulty.EASY) {
+            threshhold = paddleLeftSprite.height / 3;
+        } else if (gameProperties.gameDifficulty == gameDifficulty.MEDIUM) {
+            threshhold = paddleLeftSprite.height / 4;
+        }
+
+        if ((ballSprite.world.y - paddleLeftSprite.world.y) > threshhold) {
+            // ball is below paddle
+            if (ballSprite.body.velocity.y < 0) {
+                // ball is moving up
+                paddleLeftSprite.body.velocity.setTo(-ballSprite.body.velocity.y);
+            } else {
+                // ball is moving down
+                paddleLeftSprite.body.velocity.setTo(ballSprite.body.velocity.y)
+            }
+
+        } else if ((ballSprite.world.y - paddleLeftSprite.position.y) < -1 * threshhold) {
+            // ball is above paddle
+            if (ballSprite.body.velocity.y < 0) {
+                // ball is moving up
+                paddleLeftSprite.body.velocity.setTo(ballSprite.body.velocity.y);
+            } else {
+                // ball is moving down
+                paddleLeftSprite.body.velocity.setTo(-ballSprite.body.velocity.y)
+            }
+        }
+        paddleLeftSprite.body.maxVelocity.y = gameProperties.paddleVelocity;
+        paddleLeftSprite.body.velocity.x = 0;
     };
 
     var moveRightPaddle = function () {
@@ -328,21 +379,32 @@ var mainState = function(game) {
 
     var hideTextFields = function () {
         instructions.visible = false;
-        instructions.visible = false;
         winnerLeft.visible = false;
         winnerRight.visible = false;
     };
 
+    var getInitialBallVelocity = function() {
+
+        switch(gameProperties.gameDifficulty) {
+            case gameDifficulty.EASY:
+                return gameProperties.ballVelocityEasy;
+            case gameDifficulty.MEDIUM:
+                return gameProperties.ballVelocityMedium;
+            case gameDifficulty.DIFFICULT:
+                return gameProperties.ballVelocityDifficult;
+        }
+    };
+
     var getDifficulty = function() {
-        return gameDifficulty.MEDIUM; // TODO
+        return gameProperties.gameDifficulty;
     };
 
     var setDifficulty = function(difficulty) {
-        // TIDI
+        gameProperties.gameDifficulty = difficulty;
     };
 
     var setGameMode = function(gameMode) {
-        // TODO
+        gameProperties.gameMode = gameMode;
     };
 
     return {
